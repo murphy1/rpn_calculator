@@ -1,40 +1,13 @@
-# The main file for the project
-
-"""
-User will input an RPN expression, the program will calculate it and output the answer
-The program will first push the numbers to the stack
-It will then read the operator, pop the numbers, calculate the result and push that back to the stack
-It will then read the next operator, pop the numbers, calculate the result and push it back to the stack
-Will repeat until all operations are complete
-Will then check for any print symbols and print the output if one is encountered
-
-TO DO:
-
-Manage exceptions
-
-upload to github
-
-write a README
-
-add more comments
-
-change variable names to be more readable
-
-review code and update where needed
-
-"""
+# The main file for the project. Contains the Operators and Calculation class
 
 from data_structures import Stack
 
 
 class Operators:
-# This class will handle the calculations for the program
+    """This class will handle the calculations for the program"""
 
     @staticmethod
     def operate(operator, num1, num2=0):
-
-        # moved num2 in front for some of these expressions
-        # this will help to give us the correct answer in cases like 3 4 - 5 +  which is (3-4) + 5 and 5 1 2 + 4 * + 3 -
         if operator is "+":
             return num2 + num1
         elif operator is "-":
@@ -65,7 +38,7 @@ class Calc:
         self.operators = ["+", "-", "*", "//", "n", "e"]
 
     def calculate(self, expression):
-
+        # loop through the expression
         while len(expression) > self.COUNT:
             # Get the next item from the expression
             next_item = expression[self.COUNT]
@@ -74,18 +47,25 @@ class Calc:
 
             if next_item is "p":
                 self.PRINT = True
+
+            # add the numbers to the stack
             elif next_item not in self.operators:
                 self.stack.push(next_item)
+
             else:
+                # if and operator is found, pop the numbers
                 num1 = int(self.stack.pop())
                 if self.stack.is_empty() is False:
                     num2 = int(self.stack.pop())
+                    # send to the calculation class and get the result
                     result = Operators.operate(next_item, num1, num2)
+                    # push the result to the stack
                     self.stack.push(result)
                 else:
                     result = Operators.operate(next_item, num1)
                     self.stack.push(result)
 
+        # if a print symbol is found. Print result to the terminal
         if self.PRINT is True:
             print(self.stack.pop())
             # Reset the count and printing options so the method can be called again
@@ -95,12 +75,3 @@ class Calc:
             self.COUNT = 0
             self.PRINT = False
             return self.stack.pop()
-
-# stack [2,10]
-
-
-#c = Calc()
-
-#c.calculate("5 8 * n p")
-#c.calculate("4 7 3 + + p")
-#c.calculate("3 6 1 + + 2 e")
