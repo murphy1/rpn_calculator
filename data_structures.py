@@ -1,4 +1,4 @@
-# This file will contain the data structures needed for our project
+# This file will contain the Stack data structure needed for our project
 
 
 class Stack:

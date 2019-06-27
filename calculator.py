@@ -1,13 +1,23 @@
-# The main file for the project. Contains the Operators and Calculation class
+# The main file for the project. Contains the Helper and Calculation class
 
 from data_structures import Stack
 
 
-class Operators:
-    """This class will handle the calculations for the program"""
+class Helper:
+    """This helper class will format the expression and handle the calculations"""
+
+    def __init__(self):
+        self.operators = ["+", "-", "*", "//", "n", "e", "p"]
+
+    def format_expression(self, expression):
+        result = ""
+        for char in expression:
+            if char.isdigit() or char in self.operators:
+                result += char+" "
+        return result
 
     @staticmethod
-    def operate(operator, num1, num2=0):
+    def get_result(operator, num1, num2=0):
         if operator is "+":
             return num2 + num1
         elif operator is "-":
@@ -36,8 +46,12 @@ class Calc:
         self.COUNT = 0
         self.PRINT = False
         self.operators = ["+", "-", "*", "//", "n", "e"]
+        self.form = Helper()
 
-    def calculate(self, expression):
+    def calculate(self, unformatted_expression):
+        # format the expression correctly so it can be calculated
+        expression = self.form.format_expression(unformatted_expression)
+
         # loop through the expression
         while len(expression) > self.COUNT:
             # Get the next item from the expression
@@ -53,25 +67,35 @@ class Calc:
                 self.stack.push(next_item)
 
             else:
-                # if and operator is found, pop the numbers
-                num1 = int(self.stack.pop())
-                if self.stack.is_empty() is False:
-                    num2 = int(self.stack.pop())
-                    # send to the calculation class and get the result
-                    result = Operators.operate(next_item, num1, num2)
-                    # push the result to the stack
-                    self.stack.push(result)
-                else:
-                    result = Operators.operate(next_item, num1)
-                    self.stack.push(result)
+                # if an operator is found, pop the numbers
+                try:
+                    num1 = int(self.stack.pop())
+                    if self.stack.is_empty() is False:
+                        num2 = int(self.stack.pop())
+                        # send to the calculation class and get the result
+                        result = Helper.get_result(next_item, num1, num2)
+                        # push the result to the stack
+                        self.stack.push(result)
+                    else:
+                        result = Helper.get_result(next_item, num1)
+                        self.stack.push(result)
+                except ValueError:
+                    print("Cannot calculate. Invalid Expression!")
+                    return
 
         # if a print symbol is found. Print result to the terminal
-        if self.PRINT is True:
-            print(self.stack.pop())
-            # Reset the count and printing options so the method can be called again
-            self.COUNT = 0
-            self.PRINT = False
-        else:
-            self.COUNT = 0
-            self.PRINT = False
-            return self.stack.pop()
+        try:
+            if self.stack.is_empty():
+                raise ValueError
+            if self.PRINT is True:
+                print(self.stack.pop())
+                # Reset the count and printing options so the method can be called again
+                self.COUNT = 0
+                self.PRINT = False
+            else:
+                self.COUNT = 0
+                self.PRINT = False
+                return self.stack.pop()
+        except ValueError:
+            print("Cannot calculate. Invalid Expression!")
+            return
